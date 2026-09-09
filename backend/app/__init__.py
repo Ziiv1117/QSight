@@ -1,0 +1,2 @@
+"""QSight local backend application."""
+

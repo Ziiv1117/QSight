@@ -1,0 +1,544 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "QSight Local API",
+    "description": "质界智检本地任务、追溯与文件采集接口",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/health": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Health",
+        "operationId": "health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiEnvelope"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workpieces": {
+      "post": {
+        "tags": [
+          "workpieces"
+        ],
+        "summary": "Create Workpiece",
+        "operationId": "create_workpiece_api_v1_workpieces_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkpieceCreate"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/inspections": {
+      "post": {
+        "tags": [
+          "inspections"
+        ],
+        "summary": "Create Inspection",
+        "operationId": "create_inspection_api_v1_inspections_post",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InspectionCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "inspections"
+        ],
+        "summary": "List Inspections",
+        "operationId": "list_inspections_api_v1_inspections_get",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "title": "Page"
+            }
+          },
+          {
+            "name": "page_size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 20,
+              "title": "Page Size"
+            }
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "$ref": "#/components/schemas/InspectionState"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "State"
+            }
+          },
+          {
+            "name": "product_code",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 80
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Product Code"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/inspections/{inspection_id}": {
+      "get": {
+        "tags": [
+          "inspections"
+        ],
+        "summary": "Get Inspection",
+        "operationId": "get_inspection_api_v1_inspections__inspection_id__get",
+        "parameters": [
+          {
+            "name": "inspection_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Inspection Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/inspections/{inspection_id}/capture": {
+      "post": {
+        "tags": [
+          "acquisition"
+        ],
+        "summary": "Import View",
+        "operationId": "import_view_api_v1_inspections__inspection_id__capture_post",
+        "parameters": [
+          {
+            "name": "inspection_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Inspection Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_import_view_api_v1_inspections__inspection_id__capture_post"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiEnvelope"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ApiEnvelope": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "title": "Request Id"
+          },
+          "inspection_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Inspection State"
+          },
+          "data": {
+            "anyOf": [
+              {},
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "error_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error Code"
+          },
+          "message": {
+            "type": "string",
+            "title": "Message"
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id",
+          "message"
+        ],
+        "title": "ApiEnvelope"
+      },
+      "Body_import_view_api_v1_inspections__inspection_id__capture_post": {
+        "properties": {
+          "view_id": {
+            "type": "string",
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "View Id"
+          },
+          "view_name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 80
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "View Name"
+          },
+          "image": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "Image"
+          }
+        },
+        "type": "object",
+        "required": [
+          "view_id",
+          "image"
+        ],
+        "title": "Body_import_view_api_v1_inspections__inspection_id__capture_post"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "InspectionCreate": {
+        "properties": {
+          "workpiece_id": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Workpiece Id"
+          },
+          "model_version_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 120
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Version Id"
+          },
+          "view_recipe": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "View Recipe"
+          },
+          "expected_view_count": {
+            "type": "integer",
+            "maximum": 32.0,
+            "minimum": 1.0,
+            "title": "Expected View Count",
+            "default": 6
+          }
+        },
+        "type": "object",
+        "required": [
+          "workpiece_id",
+          "view_recipe"
+        ],
+        "title": "InspectionCreate"
+      },
+      "InspectionState": {
+        "type": "string",
+        "enum": [
+          "CREATED",
+          "CAPTURING",
+          "READY",
+          "INFERENCING",
+          "DECIDED",
+          "RECAPTURE_REQUIRED",
+          "REVIEW_REQUIRED",
+          "CLOSED",
+          "FAILED"
+        ],
+        "title": "InspectionState"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "WorkpieceCreate": {
+        "properties": {
+          "product_code": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Product Code"
+          },
+          "product_name": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Product Name"
+          },
+          "product_revision": {
+            "type": "string",
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Product Revision",
+            "default": "A"
+          },
+          "batch_code": {
+            "type": "string",
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Batch Code"
+          },
+          "batch_source": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Batch Source"
+          },
+          "serial_no": {
+            "type": "string",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Serial No"
+          }
+        },
+        "type": "object",
+        "required": [
+          "product_code",
+          "product_name",
+          "batch_code",
+          "serial_no"
+        ],
+        "title": "WorkpieceCreate"
+      }
+    }
+  }
+}

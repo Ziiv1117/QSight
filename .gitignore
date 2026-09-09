@@ -1,0 +1,20 @@
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+backend/.venv/
+backend/**/__pycache__/
+backend/**/*.pyc
+backend/runtime/*
+!backend/runtime/.gitkeep
+*.db
+*.sqlite
+*.sqlite3
+.env
+.env.*
+*.log
+
+# Local tools and test caches
+.idea/
+.pytest_cache/
+.venv/
+!**/.env.example
